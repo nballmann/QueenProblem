@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.GridPane?>
+<?scenebuilder-background-color 0x9f9f9fff?>
+
+<GridPane fx:id="chessGrid" hgap="0.0" prefHeight="360.0" prefWidth="360.0" vgap="0.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="org.nic.genetics.dameproblem.controller.ChessController">
+  <!-- TODO Add Nodes -->
+  <columnConstraints>
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
+    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
+    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
+    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
+    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
+    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
+  </rowConstraints>
+  <stylesheets>
+    <URL value="@style.css" />
+  </stylesheets>
+</GridPane>

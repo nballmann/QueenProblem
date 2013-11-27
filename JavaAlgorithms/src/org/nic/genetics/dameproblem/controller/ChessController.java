@@ -78,7 +78,7 @@ public class ChessController
 		    {
 			chessBoard.getChessFields().get(y).get(x).setQueen(true);
 
-			changeFieldStatus(y, x);
+			chessBoard.changeFieldStatus(y, x);
 
 			count++;
 		    }
@@ -90,56 +90,7 @@ public class ChessController
 
 	System.out.println(count);
     }
-
-    /**
-     * Changes the status of fields in a horizontal/vertical cross shape and a diagonal x-shape to false<br>
-     * @param rowPos the center row position
-     * @param columnPos the center column position
-     */
-    public void changeFieldStatus(int columnPos, int rowPos)
-    {
-	for (ObservableList<ChessField> list : chessBoard.getChessFields())
-	{
-	    list.get(rowPos).changeFreeStatus(false); // all vertical fields
-
-	    int rowPlus = rowPos, rowMinus = rowPos;
-
-	    for(int i = columnPos + 1; i < 6; i++)
-	    {
-		if(++rowPlus < 6)
-		{
-		    chessBoard.getChessFields().get(i).get(rowPlus).changeFreeStatus(false);
-		}
-
-		if(--rowMinus >= 0)
-		{
-		    chessBoard.getChessFields().get(i).get(rowMinus).changeFreeStatus(false);
-		}
-	    }
-
-	    rowPlus = rowPos;
-	    rowMinus = rowPos;
-
-	    for(int j = columnPos - 1; j >= 0;j--)
-	    {
-		if(++rowPlus < 6)
-		{
-		    chessBoard.getChessFields().get(j).get(rowPlus).changeFreeStatus(false);
-		}
-
-		if(--rowMinus >= 0)
-		{
-		    chessBoard.getChessFields().get(j).get(rowMinus).changeFreeStatus(false);
-		}
-		
-		System.out.println("column: " + j + "rows: " + rowPlus + ":" + rowMinus);
-	    }
-	}
-
-	for (ChessField f : chessBoard.getChessFields().get(columnPos))
-	{
-	    f.changeFreeStatus(false); // all horizontal fields
-	}
-    }
+  
+    
 
 }

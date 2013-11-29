@@ -12,8 +12,9 @@ import org.nic.genetics.dameproblem.controller.ChessController;
 public class MainApp extends Application {
 
     private static final String TITLE = "Queen Problem";
-    private ChessController cc;
     private static final int FIELDCOUNT = 6;
+    
+    private ChessController cc;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -40,7 +41,7 @@ public class MainApp extends Application {
 	cc.init(FIELDCOUNT);
 //	cc.changeFieldStatus(1, 4);
 //	cc.fieldMap.get(cc.chessBoard.getChessFields().get(5).get(4)).setVisible(false);
-	cc.startSolve(0, 0);
+//	cc.startSolve(0, 0);
     }
 
     public static void main(String[] args) {

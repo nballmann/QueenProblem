@@ -85,6 +85,11 @@ public class ChessField
 	    freeStatus.set(false);
     }
     
+    /**
+     * Creates a deep copy of this ChessField object
+     * 
+     * @return the deep copy of this object
+     */
     public ChessField deepCopy()
     {
 	ChessField newField = new ChessField();

@@ -13,7 +13,7 @@ public class MainApp extends Application {
 
     private static final String TITLE = "Queen Problem";
     private static final int FIELDCOUNT = 6;
-    
+
     private ChessController cc;
 
     @Override
@@ -24,24 +24,24 @@ public class MainApp extends Application {
 	Parent p = (Parent) loader.load();
 
 	cc = loader.getController();
-	
+
 	AnchorPane pane = new AnchorPane();
 	pane.getChildren().add(p);
 	pane.setStyle("-fx-background-color: grey;");
-	
+
 	Scene scene = new Scene(pane);
-	
+
 	primaryStage.setScene(scene);	
 	primaryStage.setTitle(TITLE);
 	primaryStage.setHeight(388);
 	primaryStage.setWidth(480);
 	primaryStage.show();
 	primaryStage.setResizable(false);
-	
+
 	cc.init(FIELDCOUNT);
-//	cc.changeFieldStatus(1, 4);
-//	cc.fieldMap.get(cc.chessBoard.getChessFields().get(5).get(4)).setVisible(false);
-//	cc.startSolve(0, 0);
+	//	cc.changeFieldStatus(1, 4);
+	//	cc.fieldMap.get(cc.chessBoard.getChessFields().get(5).get(4)).setVisible(false);
+	//	cc.startSolve(0, 0);
     }
 
     public static void main(String[] args) {

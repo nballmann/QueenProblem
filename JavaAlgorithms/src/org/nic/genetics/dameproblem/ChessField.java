@@ -1,9 +1,8 @@
 package org.nic.genetics.dameproblem;
 
+import java.math.BigDecimal;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 
 public class ChessField
 {
@@ -11,8 +10,9 @@ public class ChessField
 
     private BooleanProperty queen = new SimpleBooleanProperty(false);
 
-    private DoubleProperty queenValue = new SimpleDoubleProperty(1.0);
-
+    private BigDecimal queenValue = new BigDecimal("1.0"); 
+    
+//    private FloatProperty queenValue = new SimpleFloatProperty(1f);
     /**
      * @return the freeStatusProperty
      */
@@ -32,34 +32,35 @@ public class ChessField
     /**
      * @return the queenValue
      */
-    public DoubleProperty queenValueProperty()
+    public BigDecimal queenValueProperty()
     {
 	return queenValue;
     }
 
-    public double getQueenValue()
+    public BigDecimal getQueenValue()
     {
-	return queenValue.get();
+	return queenValue;
     }
 
-    public void setQueenValue(final double newValue)
+    public void setQueenValue(BigDecimal newValue)
     {
-	queenValue.set(newValue);
+	queenValue = newValue;
     }
 
     public void decrementQueenValue()
-    {
-	queenValue.set(queenValue.get() - 0.2);
+    {	
+	queenValue = queenValue.subtract(new BigDecimal("0.2"));
     }
 
     public void resetQueenValue()
     {
-	queenValue.set(1.0);
+	queenValue = new BigDecimal("1.0");
     }
 
     public ChessField()
     {
 	freeStatus.set(true);
+//	queenValue.setScale(0, RoundingMode.HALF_UP);
     }
 
     public boolean isFree()
@@ -95,7 +96,7 @@ public class ChessField
 
 	newField.freeStatus.set(this.freeStatus.get());
 	newField.queen.set(this.queen.get());
-	newField.queenValue.set(this.getQueenValue());
+	newField.queenValue = new BigDecimal(this.getQueenValue().toString());
 
 	return newField;
     }

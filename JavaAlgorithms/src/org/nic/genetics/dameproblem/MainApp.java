@@ -39,9 +39,18 @@ public class MainApp extends Application {
 	primaryStage.setResizable(false);
 
 	cc.init(FIELDCOUNT);
-	//	cc.changeFieldStatus(1, 4);
-	//	cc.fieldMap.get(cc.chessBoard.getChessFields().get(5).get(4)).setVisible(false);
-	//	cc.startSolve(0, 0);
+
+	Thread t = new Thread(new Runnable() {
+
+	    @Override
+	    public void run()
+	    {
+		cc.startSolve();
+	    }
+	});
+	
+	t.start();
+	
     }
 
     public static void main(String[] args) {

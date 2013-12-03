@@ -1,5 +1,6 @@
 package org.nic.genetics.dameproblem.controller;
 
+import java.math.BigDecimal;
 import java.util.Random;
 
 import javafx.collections.FXCollections;
@@ -24,8 +25,6 @@ public class ChessController
     private Random random = new Random();
 
     private ObservableList<ChessBoard> resultPool = FXCollections.observableArrayList();
-    private ObservableList<ChessBoard> mutateResultPool = FXCollections.observableArrayList();
-    private ObservableList<ChessBoard> recombineResultPool = FXCollections.observableArrayList();
     private ObservableList<ChessBoard> completeResultPool = FXCollections.observableArrayList();
 
     public ObservableMap<ChessField, AnchorPane> fieldMap = FXCollections.observableHashMap();
@@ -35,6 +34,8 @@ public class ChessController
     public void init(final int fieldCount)
     {
 	chessBoard = new ChessBoard(fieldCount);
+	
+	chessBoard.resetBoardValue();
 
 	generateInitialResultSet();
 
@@ -77,13 +78,30 @@ public class ChessController
 		    }
 		}
 
-		pane.visibleProperty().bindBidirectional(chessBoard.getChessFields().get(i).get(j).getFreeStatus());
+//		pane.visibleProperty().bindBidirectional(chessBoard.getChessFields().get(i).get(j).getFreeStatus());
 
 		chessGrid.add(pane, j, i);
 
 		fieldMap.put(chessBoard.getChessFields().get(i).get(j), pane); 
 	    }
 	}
+    }
+
+    private BigDecimal boardStatus()
+    {
+	BigDecimal actualBest = BigDecimal.ZERO;
+
+	for(ChessBoard b : resultPool)
+	{
+	    if(b.getBoardValue().compareTo(actualBest) > 0)
+	    {
+		actualBest = b.getBoardValue();
+//		chessBoard = b;
+//		System.out.println(b.getBoardValue());
+	    }
+	}
+
+	return actualBest;
     }
 
     /**
@@ -95,7 +113,35 @@ public class ChessController
      */
     public void startSolve()
     {
+//	System.out.println(boardStatus());
+	
+	BigDecimal toReach = new BigDecimal("6");
 
+	while(boardStatus().compareTo(toReach) != 0)
+	{
+	    // mutate
+	    mutate();
+
+	    // recombine
+	    recombine();
+
+	    //reset boardValues
+	    for(ChessBoard board : completeResultPool)
+	    {
+		board.resetBoardValue();
+	    }
+	    for(ChessBoard board : resultPool)
+	    {
+		board.resetBoardValue();
+	    }
+	    
+	    // select
+	    applySelection();
+	    
+	    System.out.println(boardStatus());
+	}
+	
+	System.out.println("FINAL: " + boardStatus());
     }
 
     /**
@@ -117,15 +163,15 @@ public class ChessController
     {
 	int[] mutators = threeOutOfSix();
 
-	if(mutateResultPool.isEmpty())
+	if(!completeResultPool.isEmpty())
 	{
-	    mutateResultPool.clear();
+	    completeResultPool.clear();
 	}
 
 	for(int i = 0; i < 3; i++)
 	{
-	    mutateResultPool.add(resultPool.get(mutators[i]).deepCopy());
-	    mutateResultPool.get(i).mutateBoard();
+	    completeResultPool.add(resultPool.get(mutators[i]).deepCopy());
+	    completeResultPool.get(i).mutateBoard();
 	}
     }
 
@@ -138,7 +184,8 @@ public class ChessController
 
 	for(int i = 0; i < 3; i++)
 	{
-	    recombineResultPool.add(resultPool.get(parents[i][0]).generateChild(resultPool.get(parents[i][1])));
+	    //	    recombineResultPool.add(resultPool.get(parents[i][0]).generateChild(resultPool.get(parents[i][1])));
+	    completeResultPool.add(resultPool.get(parents[i][0]).generateChild(resultPool.get(parents[i][1])));
 	}
     }
 
@@ -148,7 +195,40 @@ public class ChessController
      */
     private void applySelection()
     {
+	// add resultPool to completeResultPool
+	completeResultPool.addAll(resultPool);
 
+	// clear resultPool
+	resultPool.clear();
+
+	// 6x :
+	int x;
+	for(int i = 0; i < 6; i++)
+	{
+	    // get random pair from completeResultPool
+	    ChessBoard a, b;
+	    x = random.nextInt(completeResultPool.size());
+
+	    a = completeResultPool.get(x);
+	    completeResultPool.remove(x);
+
+	    x = random.nextInt(completeResultPool.size());
+
+	    b = completeResultPool.get(x);
+	    completeResultPool.remove(x);
+
+	    // discard the one with worst value or first if equal
+	    // add selected result to resultPool
+	    if(a.getBoardValue().compareTo(b.getBoardValue()) > 0)
+	    {
+		resultPool.add(a);
+	    }
+	    else
+	    {
+		resultPool.add(b);
+	    }
+	}
+	// after: resultPool.size == 6 completeResultPool.size == 0
     }
 
     /**
@@ -194,7 +274,6 @@ public class ChessController
 		else if (j==2)
 		    rhs[i] = r;
 	    }
-
 	}
 
 	return new int[][] {{lhs[0],rhs[0]},{lhs[1],rhs[1]},{lhs[2],rhs[2]}};

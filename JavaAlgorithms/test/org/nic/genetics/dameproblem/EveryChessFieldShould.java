@@ -1,7 +1,11 @@
 package org.nic.genetics.dameproblem;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.math.BigDecimal;
+
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class EveryChessFieldShould
 {
@@ -40,6 +44,6 @@ public class EveryChessFieldShould
 
 	cf.decrementQueenValue();
 
-	assertEquals(0.8, cf.getQueenValue(), 0.01);
+	assertEquals(new BigDecimal("0.8"), cf.getQueenValue());
     }
 }

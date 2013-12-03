@@ -1,5 +1,6 @@
 package org.nic.genetics.dameproblem;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -36,7 +37,24 @@ public class ChessBoard
 	    chessFields.add(column);
 	}
 
-	FXCollections.unmodifiableObservableList(chessFields);
+	//	FXCollections.unmodifiableObservableList(chessFields);
+
+	for(int i = 0; i < fieldCount; i++)
+	{
+	    int r_x = random.nextInt(fieldCount), r_y = random.nextInt(fieldCount);
+
+	    if(!chessFields.get(r_y).get(r_x).isQueen())
+	    {
+//		chessFields.get(r_y).get(r_x).setQueen(true);
+		setQueen(r_y, r_x, true);
+	    }
+	    else
+	    {
+		--i;
+	    }
+	}
+	
+	resetBoardValue();
     }
 
     public int getFieldCount()
@@ -57,6 +75,23 @@ public class ChessBoard
     public void setQueen(final int row, final int column, final boolean queenStatus)
     {
 	chessFields.get(row).get(column).setQueen(queenStatus);
+//	changeFieldStatus(row, column);
+    }
+    
+    public void setQueen(final ChessField field, final boolean queenStatus)
+    {
+	field.setQueen(queenStatus);
+	
+	for(int i = 0; i < chessFields.size(); i++)
+	{
+	    for (int j = 0; j < chessFields.size(); j++)
+	    {
+		if(chessFields.get(i).get(j) == field)
+		{
+		    changeFieldStatus(i, j);
+		}
+	    }
+	}
     }
 
     public boolean isQueen(final int rowPos, final int columnPos)
@@ -64,9 +99,9 @@ public class ChessBoard
 	return chessFields.get(rowPos).get(columnPos).isQueen();
     }
 
-    public double getBoardValue()
+    public BigDecimal getBoardValue()
     {
-	double value = 6;
+	BigDecimal value = new BigDecimal(6);
 
 	for(ObservableList<ChessField> rows : chessFields)
 	{
@@ -74,7 +109,7 @@ public class ChessBoard
 	    {
 		if(field.isQueen())
 		{
-		    value -= (1-field.getQueenValue());
+		    value = value.subtract(new BigDecimal(1).subtract(field.getQueenValue()));
 		}
 	    }
 	}
@@ -164,7 +199,7 @@ public class ChessBoard
      * 
      * @param field the ChessField to decrement 
      */
-    private void changeQueenValue(final ChessField field)
+    private void changeQueenValue(ChessField field)
     {
 	field.decrementQueenValue();
     }
@@ -219,8 +254,10 @@ public class ChessBoard
 		    }
 		    else
 		    {
-			chessFields.get(j).get(i).setQueen(false);
-			chessFields.get(j+mutation[0]).get(i+mutation[1]).setQueen(true);
+			setQueen(j, i, false);
+//			chessFields.get(j).get(i).setQueen(false);
+//			chessFields.get(j+mutation[0]).get(i+mutation[1]).setQueen(true);
+			setQueen(j+mutation[0], i+mutation[1], true);
 		    }
 		}
 	    }
@@ -232,7 +269,7 @@ public class ChessBoard
      * @param varianz the maximum amount by which a queen can be moved randomly
      * @return direction and amount of the queen-offset
      */
-    private int[] mutateQueen(int varianz)
+    private int[] mutateQueen(final int varianz)
     {
 	int rndX = random.nextInt(varianz*2)-varianz;
 	int rndY = random.nextInt(varianz*2)-varianz;
@@ -312,6 +349,29 @@ public class ChessBoard
 	}
 
 	return child;
+    }
+    
+    public void resetBoardValue()
+    {
+	for(ObservableList<ChessField> row : chessFields)
+	{
+	    for(ChessField field : row)
+	    {
+		field.resetQueenValue();
+	    }
+	}
+	
+	for( int i = 0; i < chessFields.size(); i++)
+	{
+	    for( int j = 0; j < chessFields.get(0).size(); j++)
+	    {
+		if(chessFields.get(i).get(j).isQueen())
+		{
+		    changeFieldStatus(i, j);
+		}
+	    }
+	}
+		
     }
 
 

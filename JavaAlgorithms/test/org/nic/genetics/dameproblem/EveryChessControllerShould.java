@@ -40,7 +40,7 @@ public class EveryChessControllerShould
 	
 	cc.init(6);
 	
-	assertEquals(36, cc.fieldMap.size());
+	assertEquals(36, cc.paneList.size());
     }
     
     @SuppressWarnings("unchecked")

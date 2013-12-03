@@ -238,6 +238,8 @@ public class ChessBoard
     {
 	for (int i = 0; i < chessFields.size(); i++)
 	{
+	    int trySet = 0;
+	    
 	    for (int j = 0; j < chessFields.get(0).size(); j++)
 	    {
 		if (chessFields.get(j).get(i).isQueen())
@@ -251,6 +253,8 @@ public class ChessBoard
 			    || chessFields.get(j+mutation[0]).get(i+mutation[1]).isQueen() )
 		    {
 			j--;
+			if(trySet++ == 3)
+			    break;
 		    }
 		    else
 		    {
@@ -321,9 +325,9 @@ public class ChessBoard
 	    {
 		if(field.isQueen())
 		{
-		    for(int i = 0; i < otherParent.getFieldCount(); i++)
+		    for(int i = 0; i < otherParent.getChessFields().size(); i++)
 		    {
-			for(int j = 0; j < otherParent.getFieldCount(); j++)
+			for(int j = 0; j < otherParent.getChessFields().size(); j++)
 			{
 			    if(otherParent.getChessFields().get(i).get(j).isQueen())
 			    {

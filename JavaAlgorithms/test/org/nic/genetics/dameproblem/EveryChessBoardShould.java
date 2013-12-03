@@ -84,13 +84,21 @@ public class EveryChessBoardShould
 	    }
 	}
 
-	assertEquals(36, setFields);
+	assertTrue(setFields > 6);
     }
 
     @Test
     public void BeAbleToReturnItsBoardValue()
     {
 	ChessBoard cb = new ChessBoard(6);
+	
+	for(ObservableList<ChessField> fields : cb.getChessFields())
+	{
+	    for(ChessField field : fields)
+	    {
+		field.setQueen(false);
+	    }
+	}
 
 	assertEquals(new BigDecimal(6), cb.getBoardValue());
     }
@@ -100,19 +108,6 @@ public class EveryChessBoardShould
     {
 	ChessBoard cb = new ChessBoard(6);
 
-//	cb.setQueen(0, 0, true);
-
-//	try
-//	{
-//	    Method m = cb.getClass().getDeclaredMethod("changeQueenValue", ChessField.class);
-//	    m.setAccessible(true);
-//	    m.invoke(cb, cb.getChessFields().get(0).get(0));
-//
-//	} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-//	{
-//	    e.printStackTrace();
-//	}
-
 	assertTrue( cb.getBoardValue().floatValue() < 6f &&  cb.getBoardValue().floatValue() >= 0 );
     }
 
@@ -120,11 +115,6 @@ public class EveryChessBoardShould
     public void BeAbleToMutateWithinItsBoundaries()
     {
 	ChessBoard cb = new ChessBoard(6);
-
-	cb.setQueen(0, 0, true);
-	cb.setQueen(5, 5, true);
-	cb.setQueen(0, 5, true);
-	cb.setQueen(5, 0, true);
 
 	int cycleCount = 0;
 
@@ -145,7 +135,7 @@ public class EveryChessBoardShould
 		}
 	    }
 
-	    if(count == 4)
+	    if(count == 6)
 	    {
 		cycleCount++;
 	    }
@@ -159,17 +149,23 @@ public class EveryChessBoardShould
     {
 	ChessBoard cb = new ChessBoard(6);
 
-	cb.setQueen(1, 0, true);
-	cb.setQueen(4, 1, true);
-	cb.setQueen(5, 0, true);
-	cb.setQueen(5, 5, true);
-	cb.setQueen(1, 5, true);
-	cb.setQueen(3, 3, true);
+	
+	int startCount = 0;
 
+	for(int i = 0; i < 6; i++)
+	{
+	    for (int j = 0; j < 6; j++)
+	    {
+		if(cb.getChessFields().get(i).get(j).isQueen())
+		{
+		    startCount += (5-j);
+		}
+	    }
+	}
+	
 	cb.recombineBoard();
 
-	int[] rowPositions = new int[6];
-	int count = 0;
+	int endCount = 0;
 	
 	for(int i = 0; i < 6; i++)
 	{
@@ -177,17 +173,12 @@ public class EveryChessBoardShould
 	    {
 		if(cb.getChessFields().get(i).get(j).isQueen())
 		{
-		    rowPositions[count++] = j;
+		    endCount += j;
 		}
 	    }
 	}
 	
-	assertEquals(rowPositions[0], 0);
-	assertEquals(rowPositions[1], 5);
-	assertEquals(rowPositions[2], 2);
-	assertEquals(rowPositions[3], 4);
-	assertEquals(rowPositions[4], 0);
-	assertEquals(rowPositions[5], 5);
+	assertEquals(startCount, endCount);
     }
     
 //    @Test

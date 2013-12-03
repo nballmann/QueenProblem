@@ -3,19 +3,18 @@ package org.nic.genetics.dameproblem.controller;
 import java.math.BigDecimal;
 import java.util.Random;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableMap;
 import javafx.fxml.FXML;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import org.nic.genetics.dameproblem.ChessBoard;
-import org.nic.genetics.dameproblem.ChessField;
 
 public class ChessController
 {
-    public static final int VARIANZ = 2;
+    public static final int VARIANZ = 6;
 
     @FXML
     private GridPane chessGrid;   
@@ -27,14 +26,16 @@ public class ChessController
     private ObservableList<ChessBoard> resultPool = FXCollections.observableArrayList();
     private ObservableList<ChessBoard> completeResultPool = FXCollections.observableArrayList();
 
-    public ObservableMap<ChessField, AnchorPane> fieldMap = FXCollections.observableHashMap();
+    public ObservableList<AnchorPane> paneList = FXCollections.observableArrayList();
+
+    private long iterations = 0;
 
     public ChessController() { }
 
     public void init(final int fieldCount)
     {
 	chessBoard = new ChessBoard(fieldCount);
-	
+
 	chessBoard.resetBoardValue();
 
 	generateInitialResultSet();
@@ -44,9 +45,9 @@ public class ChessController
 	    chessGrid.getChildren().clear();
 	}
 
-	if(!fieldMap.isEmpty())
+	if(!paneList.isEmpty())
 	{
-	    fieldMap.clear();
+	    paneList.clear();
 	}
 
 	for (int i = 0; i < chessBoard.getChessFields().size(); i++)
@@ -78,11 +79,11 @@ public class ChessController
 		    }
 		}
 
-//		pane.visibleProperty().bindBidirectional(chessBoard.getChessFields().get(i).get(j).getFreeStatus());
+		//		pane.visibleProperty().bindBidirectional(chessBoard.getChessFields().get(i).get(j).getFreeStatus());
 
 		chessGrid.add(pane, j, i);
 
-		fieldMap.put(chessBoard.getChessFields().get(i).get(j), pane); 
+		paneList.add(pane); 
 	    }
 	}
     }
@@ -96,8 +97,8 @@ public class ChessController
 	    if(b.getBoardValue().compareTo(actualBest) > 0)
 	    {
 		actualBest = b.getBoardValue();
-//		chessBoard = b;
-//		System.out.println(b.getBoardValue());
+		chessBoard = b;
+		//		System.out.println(b.getBoardValue());
 	    }
 	}
 
@@ -113,8 +114,6 @@ public class ChessController
      */
     public void startSolve()
     {
-//	System.out.println(boardStatus());
-	
 	BigDecimal toReach = new BigDecimal("6");
 
 	while(boardStatus().compareTo(toReach) != 0)
@@ -134,14 +133,32 @@ public class ChessController
 	    {
 		board.resetBoardValue();
 	    }
-	    
+
 	    // select
 	    applySelection();
-	    
+
 	    System.out.println(boardStatus());
+
+	    iterations++;
+	    
+	    Platform.runLater(new Runnable() {
+
+		@Override
+		public void run()
+		{
+		    if(iterations%100 == 0)
+		    {
+			redrawBoard();
+			drawQueens();
+		    }
+		}
+		
+	    });
 	}
-	
-	System.out.println("FINAL: " + boardStatus());
+
+	System.out.println("FINAL: " + boardStatus() + "\nIterations: " + iterations);
+	redrawBoard();
+	showPerfectResult();
     }
 
     /**
@@ -184,7 +201,6 @@ public class ChessController
 
 	for(int i = 0; i < 3; i++)
 	{
-	    //	    recombineResultPool.add(resultPool.get(parents[i][0]).generateChild(resultPool.get(parents[i][1])));
 	    completeResultPool.add(resultPool.get(parents[i][0]).generateChild(resultPool.get(parents[i][1])));
 	}
     }
@@ -277,6 +293,73 @@ public class ChessController
 	}
 
 	return new int[][] {{lhs[0],rhs[0]},{lhs[1],rhs[1]},{lhs[2],rhs[2]}};
+    }
+
+    private void showPerfectResult()
+    {
+	for(int i = 0; i < 6; i++)
+	{
+	    for (int j = 0; j < 6; j++)
+	    {
+		if(chessBoard.getChessFields().get(i).get(j).isQueen())
+		{
+		    System.out.print("X ");
+		    chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: yellow;");
+		}
+		else
+		{
+		    System.out.print("O ");
+		}
+	    }
+	    System.out.println();
+	}
+    }
+    
+    private void drawQueens()
+    {
+	for(int i = 0; i < 6; i++)
+	{
+	    for (int j = 0; j < 6; j++)
+	    {
+		if(chessBoard.getChessFields().get(i).get(j).isQueen())
+		{
+		    chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: yellow;");
+		}
+	    }
+	}
+    }
+
+    private void redrawBoard()
+    {
+
+	for(int i = 0; i < 6; i++)
+	{
+	    for (int j = 0; j < 6; j++)
+	    {
+		if(i%2==0)
+		{
+		    if(j%2!=0)
+		    {
+			 chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: black;");
+		    }
+		    else
+		    {
+			 chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: white;");
+		    }
+		}
+		else
+		{
+		    if(j%2!=0)
+		    {
+			 chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: white;");
+		    }
+		    else
+		    {
+			 chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: black;");
+		    }
+		}
+	    }
+	}
     }
 
 

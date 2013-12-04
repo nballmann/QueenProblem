@@ -8,6 +8,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import javafx.collections.ObservableList;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import org.junit.Test;
@@ -19,6 +20,7 @@ public class EveryChessControllerShould
     public void initializeCorrectly()
     {
 	ChessController cc = new ChessController();
+	AnchorPane parent = new AnchorPane();
 	
 	Field pane;
 	try
@@ -38,7 +40,7 @@ public class EveryChessControllerShould
 	    e.printStackTrace();
 	}
 	
-	cc.init(6);
+	cc.init(6, parent);
 	
 	assertEquals(36, cc.paneList.size());
     }
@@ -48,6 +50,7 @@ public class EveryChessControllerShould
     public void generateAInitialResultSetOfCorrectSize()
     {
 	ChessController cc = new ChessController();
+	AnchorPane parent = new AnchorPane();
 	
 	Field pane;
 	Field resultPool;
@@ -60,7 +63,7 @@ public class EveryChessControllerShould
 	    pane.setAccessible(true);
 	    pane.set(cc, new GridPane());
 	    
-	    cc.init(6);
+	    cc.init(6, parent);
 	    
 	    size = ((ObservableList<ChessBoard>)(resultPool.get(cc))).size();
 	    
@@ -83,6 +86,7 @@ public class EveryChessControllerShould
     public void generateCorrectlyMutatedChildren()
     {
 	ChessController cc = new ChessController();
+	AnchorPane parent = new AnchorPane();
 	
 	Field pane;
 	Field list;
@@ -98,7 +102,7 @@ public class EveryChessControllerShould
 	    list = cc.getClass().getDeclaredField("completeResultPool");
 	    list.setAccessible(true);
 	    
-	    cc.init(6);
+	    cc.init(6, parent);
 	    
 	    m = cc.getClass().getDeclaredMethod("mutate", new Class<?>[] {});
 	    m.setAccessible(true);
@@ -131,6 +135,7 @@ public class EveryChessControllerShould
     public void generateCorrectlyRecombinedChildren()
     {
 	ChessController cc = new ChessController();
+	AnchorPane parent = new AnchorPane();
 	
 	Field pane;
 	Field list;
@@ -146,7 +151,7 @@ public class EveryChessControllerShould
 	    list = cc.getClass().getDeclaredField("completeResultPool");
 	    list.setAccessible(true);
 	    
-	    cc.init(6);
+	    cc.init(6, parent);
 	    
 	    m = cc.getClass().getDeclaredMethod("recombine", new Class<?>[] {});
 	    m.setAccessible(true);
@@ -245,6 +250,7 @@ public class EveryChessControllerShould
     public void haveSixChildrenBeforeSelection()
     {
 	ChessController cc = new ChessController();
+	AnchorPane parent = new AnchorPane();
 	
 	Field pane;
 	Field list;
@@ -260,7 +266,7 @@ public class EveryChessControllerShould
 	    list = cc.getClass().getDeclaredField("completeResultPool");
 	    list.setAccessible(true);
 	    
-	    cc.init(6);
+	    cc.init(6, parent);
 	    
 	    m = cc.getClass().getDeclaredMethod("mutate", new Class<?>[] {});
 	    m.setAccessible(true);
@@ -299,6 +305,7 @@ public class EveryChessControllerShould
     public void applyTheSelectionCorrectly()
     {
 	ChessController cc = new ChessController();
+	AnchorPane parent = new AnchorPane();
 	
 	Field pane = null;
 	Field list = null;
@@ -317,7 +324,7 @@ public class EveryChessControllerShould
 	    pool = cc.getClass().getDeclaredField("resultPool");
 	    pool.setAccessible(true);
 	    
-	    cc.init(6);
+	    cc.init(6, parent);
 	    
 	    m = cc.getClass().getDeclaredMethod("mutate", new Class<?>[] {});
 	    m.setAccessible(true);

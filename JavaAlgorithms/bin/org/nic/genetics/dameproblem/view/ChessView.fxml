@@ -15,8 +15,12 @@
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
   </columnConstraints>
   <rowConstraints>
+    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
+    <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
     <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
     <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />
     <RowConstraints maxHeight="60.0" minHeight="10.0" prefHeight="60.0" vgrow="NEVER" />

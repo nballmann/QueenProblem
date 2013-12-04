@@ -12,6 +12,8 @@ import org.nic.genetics.dameproblem.controller.ChessController;
 public class ChessBoard
 {
     private int fieldCount;
+    
+    private int length;
 
     private ObservableList<ObservableList<ChessField>> chessFields = FXCollections.observableArrayList();
 
@@ -24,6 +26,7 @@ public class ChessBoard
     public ChessBoard(final int fieldCount)
     {
 	this.fieldCount = (int) Math.pow(fieldCount, 2);
+	length = fieldCount-1;
 
 	for(int i = 0; i < fieldCount; i++)
 	{
@@ -101,7 +104,7 @@ public class ChessBoard
 
     public BigDecimal getBoardValue()
     {
-	BigDecimal value = new BigDecimal(6);
+	BigDecimal value = new BigDecimal(length+1);
 
 	for(ObservableList<ChessField> rows : chessFields)
 	{
@@ -134,11 +137,11 @@ public class ChessBoard
 
 	int rowPlus = column, rowMinus = column;
 
-	for(int i = row + 1; i < 6; i++)
+	for(int i = row + 1; i < ChessController.ROW_LENGTH; i++)
 	{
 	    if(i < 6)
 	    {
-		if(++rowPlus < 6)
+		if(++rowPlus < ChessController.ROW_LENGTH)
 		{
 		    chessFields.get(i).get(rowPlus).changeFreeStatus(false);
 		    changeQueenValue(chessFields.get(i).get(rowPlus));
@@ -163,7 +166,7 @@ public class ChessBoard
 	{
 	    if(j >= 0)
 	    {
-		if(++rowPlus < 6)
+		if(++rowPlus < ChessController.ROW_LENGTH)
 		{
 		    chessFields.get(j).get(rowPlus).changeFreeStatus(false);
 		    changeQueenValue(chessFields.get(j).get(rowPlus));
@@ -294,7 +297,7 @@ public class ChessBoard
 	    {
 		if(chessFields.get(i).get(j).isQueen())
 		{
-		    fields.add(chessFields.get(i).get(5-j));
+		    fields.add(chessFields.get(i).get(length-j));
 
 		    chessFields.get(i).get(j).setQueen(false);
 		}
@@ -332,9 +335,9 @@ public class ChessBoard
 			    if(otherParent.getChessFields().get(i).get(j).isQueen())
 			    {
 
-				if(!child.getChessFields().get(i).get(5-j).isQueen())
+				if(!child.getChessFields().get(i).get(length-j).isQueen())
 				{
-				    child.getChessFields().get(i).get(5-j).setQueen(true);
+				    child.getChessFields().get(i).get(length-j).setQueen(true);
 				    field.setQueen(false);
 
 				    counter++;

@@ -14,7 +14,11 @@ import org.nic.genetics.dameproblem.ChessBoard;
 
 public class ChessController
 {
-    public static final int VARIANZ = 6;
+    public static final int VARIANZ = 11;
+    
+    public static int ROW_LENGTH;
+    
+    public static int REBASE;
 
     @FXML
     private GridPane chessGrid;   
@@ -32,8 +36,14 @@ public class ChessController
 
     public ChessController() { }
 
-    public void init(final int fieldCount)
+    public void init(final int fieldCount, AnchorPane parent)
     {
+	ROW_LENGTH = fieldCount;
+	
+	REBASE = fieldCount-1;
+	
+//	GridPane chessGrid2 = new GridPane();
+	
 	chessBoard = new ChessBoard(fieldCount);
 
 	chessBoard.resetBoardValue();
@@ -78,14 +88,15 @@ public class ChessController
 			pane.setStyle("-fx-background-color: black;");
 		    }
 		}
-
 		//		pane.visibleProperty().bindBidirectional(chessBoard.getChessFields().get(i).get(j).getFreeStatus());
 
 		chessGrid.add(pane, j, i);
 
 		paneList.add(pane); 
+		
 	    }
 	}
+//	parent.getChildren().add(chessGrid);
     }
 
     private BigDecimal boardStatus()
@@ -114,7 +125,7 @@ public class ChessController
      */
     public void startSolve()
     {
-	BigDecimal toReach = new BigDecimal("6");
+	BigDecimal toReach = new BigDecimal(ROW_LENGTH);
 
 	while(boardStatus().compareTo(toReach) != 0)
 	{
@@ -297,14 +308,14 @@ public class ChessController
 
     private void showPerfectResult()
     {
-	for(int i = 0; i < 6; i++)
+	for(int i = 0; i < ROW_LENGTH; i++)
 	{
-	    for (int j = 0; j < 6; j++)
+	    for (int j = 0; j < ROW_LENGTH; j++)
 	    {
 		if(chessBoard.getChessFields().get(i).get(j).isQueen())
 		{
 		    System.out.print("X ");
-		    chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: yellow;");
+		    chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: yellow;");
 		}
 		else
 		{
@@ -317,13 +328,13 @@ public class ChessController
     
     private void drawQueens()
     {
-	for(int i = 0; i < 6; i++)
+	for(int i = 0; i < ROW_LENGTH; i++)
 	{
-	    for (int j = 0; j < 6; j++)
+	    for (int j = 0; j < ROW_LENGTH; j++)
 	    {
 		if(chessBoard.getChessFields().get(i).get(j).isQueen())
 		{
-		    chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: yellow;");
+		    chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: yellow;");
 		}
 	    }
 	}
@@ -331,31 +342,30 @@ public class ChessController
 
     private void redrawBoard()
     {
-
-	for(int i = 0; i < 6; i++)
+	for(int i = 0; i < ROW_LENGTH; i++)
 	{
-	    for (int j = 0; j < 6; j++)
+	    for (int j = 0; j < ROW_LENGTH; j++)
 	    {
 		if(i%2==0)
 		{
 		    if(j%2!=0)
 		    {
-			 chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: black;");
+			 chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: black;");
 		    }
 		    else
 		    {
-			 chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: white;");
+			 chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: white;");
 		    }
 		}
 		else
 		{
 		    if(j%2!=0)
 		    {
-			 chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: white;");
+			 chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: white;");
 		    }
 		    else
 		    {
-			 chessGrid.getChildren().get((i*6)+j).setStyle("-fx-background-color: black;");
+			 chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: black;");
 		    }
 		}
 	    }

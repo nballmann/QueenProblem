@@ -14,7 +14,7 @@ import org.nic.genetics.dameproblem.controller.ChessController;
 public class MainApp extends Application {
 
     private static final String TITLE = "Queen Problem";
-    private static final int FIELDCOUNT = 8;
+    private static final int FIELDCOUNT = 26;
 
     private ChessController cc;
 
@@ -35,8 +35,8 @@ public class MainApp extends Application {
 
 	primaryStage.setScene(scene);	
 	primaryStage.setTitle(TITLE);
-	primaryStage.setHeight(388);
-	primaryStage.setWidth(480);
+	primaryStage.setHeight(FIELDCOUNT*35+28);
+	primaryStage.setWidth(FIELDCOUNT*35+4);
 	primaryStage.show();
 	primaryStage.setResizable(false);
 	

@@ -40,15 +40,12 @@ public class ChessBoard
 	    chessFields.add(column);
 	}
 
-	//	FXCollections.unmodifiableObservableList(chessFields);
-
 	for(int i = 0; i < fieldCount; i++)
 	{
 	    int r_x = random.nextInt(fieldCount), r_y = random.nextInt(fieldCount);
 
 	    if(!chessFields.get(r_y).get(r_x).isQueen())
 	    {
-//		chessFields.get(r_y).get(r_x).setQueen(true);
 		setQueen(r_y, r_x, true);
 	    }
 	    else
@@ -262,8 +259,6 @@ public class ChessBoard
 		    else
 		    {
 			setQueen(j, i, false);
-//			chessFields.get(j).get(i).setQueen(false);
-//			chessFields.get(j+mutation[0]).get(i+mutation[1]).setQueen(true);
 			setQueen(j+mutation[0], i+mutation[1], true);
 		    }
 		}
@@ -320,42 +315,54 @@ public class ChessBoard
 	ChessBoard child = this.deepCopy();
 	child.recombineBoard();
 
+	int range = random.nextInt(length+1);
 	int counter = 0;
+	int validator = 0;
 
 	for(ObservableList<ChessField> row : child.getChessFields())
 	{
 	    for(ChessField field : row)
 	    {
-		if(field.isQueen())
+		if(field.isQueen()) // for each queen of the child:
 		{
+		    boolean lastSet = false;
+		    
 		    for(int i = 0; i < otherParent.getChessFields().size(); i++)
 		    {
 			for(int j = 0; j < otherParent.getChessFields().size(); j++)
 			{
-			    if(otherParent.getChessFields().get(i).get(j).isQueen())
+			    if(otherParent.getChessFields().get(i).get(j).isQueen()) // for each queen of the other parent
 			    {
-
-				if(!child.getChessFields().get(i).get(length-j).isQueen())
+				if(!child.getChessFields().get(i).get(j).isQueen()) 
 				{
-				    child.getChessFields().get(i).get(length-j).setQueen(true);
-				    field.setQueen(false);
+				    child.getChessFields().get(i).get(j).setQueen(true);
+				    validator++;
+				    
+				    if(field.isQueen())
+				    {
+					field.setQueen(false);
+					validator--;
+				    }
 
-				    counter++;
-				}
-
-				if(counter == 3)
-				{
-				    return child;
+				    if(++counter >= range && validator == 0)
+				    {
+					return child;
+				    }
+				    
+				    lastSet = true;
+				    break;
 				}
 			    }
-
 			}
+			
+			if(lastSet)
+			    break;
 		    }
 		}
 	    }
 	}
 
-	return child;
+	return (validator == 0) ? child : otherParent;
     }
     
     public void resetBoardValue()

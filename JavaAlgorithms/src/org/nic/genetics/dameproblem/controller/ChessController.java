@@ -7,6 +7,7 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
@@ -14,7 +15,7 @@ import org.nic.genetics.dameproblem.ChessBoard;
 
 public class ChessController
 {
-    public static final int VARIANZ = 11;
+    public static final int VARIANZ = 36;
     
     public static int ROW_LENGTH;
     
@@ -22,10 +23,14 @@ public class ChessController
 
     @FXML
     private GridPane chessGrid;   
+    
+    private AnchorPane parent;
 
     public ChessBoard chessBoard;
 
     private Random random = new Random();
+    
+    private long startTime, endTime;
 
     private ObservableList<ChessBoard> resultPool = FXCollections.observableArrayList();
     private ObservableList<ChessBoard> completeResultPool = FXCollections.observableArrayList();
@@ -42,7 +47,7 @@ public class ChessController
 	
 	REBASE = fieldCount-1;
 	
-//	GridPane chessGrid2 = new GridPane();
+	this.parent = parent;
 	
 	chessBoard = new ChessBoard(fieldCount);
 
@@ -88,7 +93,8 @@ public class ChessController
 			pane.setStyle("-fx-background-color: black;");
 		    }
 		}
-		//		pane.visibleProperty().bindBidirectional(chessBoard.getChessFields().get(i).get(j).getFreeStatus());
+		
+		pane.setPrefSize(35, 35);
 
 		chessGrid.add(pane, j, i);
 
@@ -126,6 +132,8 @@ public class ChessController
     public void startSolve()
     {
 	BigDecimal toReach = new BigDecimal(ROW_LENGTH);
+	
+	startTime = System.currentTimeMillis();
 
 	while(boardStatus().compareTo(toReach) != 0)
 	{
@@ -136,19 +144,26 @@ public class ChessController
 	    recombine();
 
 	    //reset boardValues
+//	    int c = 0;
 	    for(ChessBoard board : completeResultPool)
 	    {
 		board.resetBoardValue();
+//		System.out.print((c<3?"m":"r") + board.getBoardValue() + "\t");
+//		c++;
 	    }
 	    for(ChessBoard board : resultPool)
 	    {
 		board.resetBoardValue();
+//		System.out.print(board.getBoardValue() + "\t");
 	    }
 
 	    // select
 	    applySelection();
 
-	    System.out.println(boardStatus());
+	    if(iterations%100 == 0)
+	    {
+		System.out.println(chessBoard.getBoardValue());
+	    }
 
 	    iterations++;
 	    
@@ -167,9 +182,20 @@ public class ChessController
 	    });
 	}
 
+	endTime = System.currentTimeMillis();
 	System.out.println("FINAL: " + boardStatus() + "\nIterations: " + iterations);
 	redrawBoard();
 	showPerfectResult();
+	
+	Platform.runLater(new Runnable() {
+
+	    @Override
+	    public void run()
+	    {
+		parent.getChildren().add(new Label(String.valueOf((endTime - startTime)/1000f) + "s"));
+	    }
+	    
+	});
     }
 
     /**
@@ -244,7 +270,7 @@ public class ChessController
 	    b = completeResultPool.get(x);
 	    completeResultPool.remove(x);
 
-	    // discard the one with worst value or first if equal
+	    // discard the one with worst value (or first if equal)
 	    // add selected result to resultPool
 	    if(a.getBoardValue().compareTo(b.getBoardValue()) > 0)
 	    {

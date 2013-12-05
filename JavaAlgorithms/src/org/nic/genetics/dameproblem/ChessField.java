@@ -12,7 +12,6 @@ public class ChessField
 
     private BigDecimal queenValue = new BigDecimal("1.0"); 
     
-//    private FloatProperty queenValue = new SimpleFloatProperty(1f);
     /**
      * @return the freeStatusProperty
      */
@@ -60,7 +59,6 @@ public class ChessField
     public ChessField()
     {
 	freeStatus.set(true);
-//	queenValue.setScale(0, RoundingMode.HALF_UP);
     }
 
     public boolean isFree()

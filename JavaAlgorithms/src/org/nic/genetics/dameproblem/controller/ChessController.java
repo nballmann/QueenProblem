@@ -25,6 +25,12 @@ public class ChessController
      */
     public static final double MUTATION_PROPABILITY = 0.6;
     
+    public static final boolean PRESERVE_FITTEST = true;
+    
+    public static final int POPULATION_SIZE = 6;
+    
+    public static int MUTATION_SIZE, RECOMBINE_SIZE;
+    
     public static int ROW_LENGTH;
     
     public static int REBASE;
@@ -54,6 +60,9 @@ public class ChessController
 	ROW_LENGTH = fieldCount;
 	
 	REBASE = fieldCount-1;
+	
+	MUTATION_SIZE = (int)Math.floor(new Double(POPULATION_SIZE)/2);
+	RECOMBINE_SIZE = (int)Math.ceil(new Double(POPULATION_SIZE)/2);
 	
 	this.parent = parent;
 	

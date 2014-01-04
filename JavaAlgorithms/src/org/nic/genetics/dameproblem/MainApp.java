@@ -14,7 +14,7 @@ import org.nic.genetics.dameproblem.controller.ChessController;
 public class MainApp extends Application {
 
     private static final String TITLE = "Queen Problem";
-    private static final int FIELDCOUNT = 26;
+    private static final int FIELDCOUNT = 16;
 
     private ChessController cc;
 
@@ -52,16 +52,15 @@ public class MainApp extends Application {
 
 	cc.init(FIELDCOUNT, pane);
 
-	Thread t = new Thread(new Runnable() {
+	new Thread(new Runnable() {
 
 	    @Override
 	    public void run()
 	    {
 		cc.startSolve();
 	    }
-	});
-	
-	t.start();
+	    
+	}).start();
 	
     }
 

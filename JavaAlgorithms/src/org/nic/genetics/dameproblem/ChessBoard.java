@@ -12,7 +12,7 @@ import org.nic.genetics.dameproblem.controller.ChessController;
 public class ChessBoard
 {
     private int fieldCount;
-    
+
     private int length;
 
     private ObservableList<ObservableList<ChessField>> chessFields = FXCollections.observableArrayList();
@@ -53,7 +53,7 @@ public class ChessBoard
 		--i;
 	    }
 	}
-	
+
 	resetBoardValue();
     }
 
@@ -75,13 +75,12 @@ public class ChessBoard
     public void setQueen(final int row, final int column, final boolean queenStatus)
     {
 	chessFields.get(row).get(column).setQueen(queenStatus);
-//	changeFieldStatus(row, column);
     }
-    
+
     public void setQueen(final ChessField field, final boolean queenStatus)
     {
 	field.setQueen(queenStatus);
-	
+
 	for(int i = 0; i < chessFields.size(); i++)
 	{
 	    for (int j = 0; j < chessFields.size(); j++)
@@ -136,8 +135,8 @@ public class ChessBoard
 
 	for(int i = row + 1; i < ChessController.ROW_LENGTH; i++)
 	{
-	    if(i < 6)
-	    {
+//	    if(i < 6)
+//	    {
 		if(++rowPlus < ChessController.ROW_LENGTH)
 		{
 		    chessFields.get(i).get(rowPlus).changeFreeStatus(false);
@@ -149,11 +148,11 @@ public class ChessBoard
 		    chessFields.get(i).get(rowMinus).changeFreeStatus(false);
 		    changeQueenValue(chessFields.get(i).get(rowMinus));
 		}
-	    }
-	    else
-	    {
-		break;
-	    }
+//	    }
+//	    else
+//	    {
+//		break;
+//	    }
 	}
 
 	rowPlus = column;
@@ -161,8 +160,8 @@ public class ChessBoard
 
 	for(int j = row - 1; j >= 0;j--)
 	{
-	    if(j >= 0)
-	    {
+//	    if(j >= 0)
+//	    {
 		if(++rowPlus < ChessController.ROW_LENGTH)
 		{
 		    chessFields.get(j).get(rowPlus).changeFreeStatus(false);
@@ -174,11 +173,11 @@ public class ChessBoard
 		    chessFields.get(j).get(rowMinus).changeFreeStatus(false);
 		    changeQueenValue(chessFields.get(j).get(rowMinus));
 		}
-	    }
-	    else
-	    {
-		break;
-	    }
+//	    }
+//	    else
+//	    {
+//		break;
+//	    }
 
 	    //		System.out.println("column: " + j + "rows: " + rowPlus + ":" + rowMinus);
 	}
@@ -239,27 +238,30 @@ public class ChessBoard
 	for (int i = 0; i < chessFields.size(); i++)
 	{
 	    int trySet = 0;
-	    
+
 	    for (int j = 0; j < chessFields.get(0).size(); j++)
 	    {
 		if (chessFields.get(j).get(i).isQueen())
 		{
-		    int[] mutation = mutateQueen(ChessController.VARIANZ);
+		    if (random.nextDouble() < ChessController.MUTATION_PROPABILITY) 
+		    {
+			int[] mutation = mutateQueen(ChessController.VARIANZ);
 
-		    if (    j+mutation[0] < 0 
-			    || i+mutation[1] < 0 
-			    || i+mutation[1] >= chessFields.get(0).size() 
-			    || j+mutation[0] >= chessFields.size() 
-			    || chessFields.get(j+mutation[0]).get(i+mutation[1]).isQueen() )
-		    {
-			j--;
-			if(trySet++ == 3)
-			    break;
-		    }
-		    else
-		    {
-			setQueen(j, i, false);
-			setQueen(j+mutation[0], i+mutation[1], true);
+			if (    j+mutation[0] < 0 
+				|| i+mutation[1] < 0 
+				|| i+mutation[1] >= chessFields.get(0).size() 
+				|| j+mutation[0] >= chessFields.size() 
+				|| chessFields.get(j+mutation[0]).get(i+mutation[1]).isQueen() )
+			{
+			    j--;
+			    if(trySet++ == 3)
+				break;
+			}
+			else
+			{
+			    setQueen(j, i, false);
+			    setQueen(j+mutation[0], i+mutation[1], true);
+			}
 		    }
 		}
 	    }
@@ -326,7 +328,7 @@ public class ChessBoard
 		if(field.isQueen()) // for each queen of the child:
 		{
 		    boolean lastSet = false;
-		    
+
 		    for(int i = 0; i < otherParent.getChessFields().size(); i++)
 		    {
 			for(int j = 0; j < otherParent.getChessFields().size(); j++)
@@ -337,7 +339,7 @@ public class ChessBoard
 				{
 				    child.getChessFields().get(i).get(j).setQueen(true);
 				    validator++;
-				    
+
 				    if(field.isQueen())
 				    {
 					field.setQueen(false);
@@ -348,13 +350,13 @@ public class ChessBoard
 				    {
 					return child;
 				    }
-				    
+
 				    lastSet = true;
 				    break;
 				}
 			    }
 			}
-			
+
 			if(lastSet)
 			    break;
 		    }
@@ -364,7 +366,7 @@ public class ChessBoard
 
 	return (validator == 0) ? child : otherParent;
     }
-    
+
     public void resetBoardValue()
     {
 	for(ObservableList<ChessField> row : chessFields)
@@ -374,7 +376,7 @@ public class ChessBoard
 		field.resetQueenValue();
 	    }
 	}
-	
+
 	for( int i = 0; i < chessFields.size(); i++)
 	{
 	    for( int j = 0; j < chessFields.get(0).size(); j++)
@@ -385,7 +387,7 @@ public class ChessBoard
 		}
 	    }
 	}
-		
+
     }
 
 

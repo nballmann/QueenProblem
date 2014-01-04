@@ -1,3 +1,7 @@
 .background {
 	-fx-background-color: red;
 }
+
+.label {
+	-fx-text-fill: red;
+}

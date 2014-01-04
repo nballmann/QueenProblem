@@ -15,7 +15,15 @@ import org.nic.genetics.dameproblem.ChessBoard;
 
 public class ChessController
 {
-    public static final int VARIANZ = 36;
+    /*
+     * VARIANZ: maximum amount to offset a queen in case of mutation
+     */
+    public static final int VARIANZ = 16;
+    
+    /*
+     *  MUTATION_PROPABILITY: the chance of mutation (1.0 = 100%)
+     */
+    public static final double MUTATION_PROPABILITY = 0.6;
     
     public static int ROW_LENGTH;
     
@@ -124,10 +132,12 @@ public class ChessController
 
     /**
      * starts the genetic solving process:<br>
-     * 1. generate initial result set<br>
-     * 2. mutate 3 random results<br>
-     * 3. generate 3 children out of 3 random pairs with recombined parameters<br>
-     * 4. reduce result pool to its original size of 6 (through selection)
+     * <ol>
+     * <li>generate initial result set</li>
+     * <li>mutate 3 random results</li>
+     * <li>generate 3 children out of 3 random pairs with recombined parameters</li>
+     * <li>reduce result pool to its original size of 6 (through selection)</li>
+     * </ol>
      */
     public void startSolve()
     {
@@ -160,10 +170,10 @@ public class ChessController
 	    // select
 	    applySelection();
 
-	    if(iterations%100 == 0)
-	    {
-		System.out.println(chessBoard.getBoardValue());
-	    }
+//	    if(iterations%100 == 0)
+//	    {
+//		System.out.println(chessBoard.getBoardValue());
+//	    }
 
 	    iterations++;
 	    
@@ -174,6 +184,7 @@ public class ChessController
 		{
 		    if(iterations%100 == 0)
 		    {
+			System.out.println(chessBoard.getBoardValue());
 			redrawBoard();
 			drawQueens();
 		    }
@@ -192,7 +203,9 @@ public class ChessController
 	    @Override
 	    public void run()
 	    {
-		parent.getChildren().add(new Label(String.valueOf((endTime - startTime)/1000f) + "s"));
+		Label l = new Label(String.valueOf((endTime - startTime)/1000f) + "s");
+		l.setStyle("-fx-text-fill:red;");
+		parent.getChildren().add(l);
 	    }
 	    
 	});

@@ -18,32 +18,35 @@ public class ChessController
     /*
      * VARIANZ: maximum amount to offset a queen in case of mutation
      */
-    public static final int VARIANZ = 16;
-    
+    public static final int VARIANZ = 6;
+
     /*
      *  MUTATION_PROPABILITY: the chance of mutation (1.0 = 100%)
      */
-    public static final double MUTATION_PROPABILITY = 0.6;
-    
-    public static final boolean PRESERVE_FITTEST = true;
-    
-    public static final int POPULATION_SIZE = 6;
-    
+    public static final double MUTATION_PROPABILITY = 0.2;
+
+    public static final int POPULATION_SIZE = 8;
+
+    /*
+     * the probability for the fittest individual to be eliminated by natural selection 
+     */
+    private static final float ELEMINATION_PROPABILITY = 0.08f;
+
     public static int MUTATION_SIZE, RECOMBINE_SIZE;
-    
+
     public static int ROW_LENGTH;
-    
+
     public static int REBASE;
 
     @FXML
     private GridPane chessGrid;   
-    
+
     private AnchorPane parent;
 
     public ChessBoard chessBoard;
 
     private Random random = new Random();
-    
+
     private long startTime, endTime;
 
     private ObservableList<ChessBoard> resultPool = FXCollections.observableArrayList();
@@ -55,17 +58,17 @@ public class ChessController
 
     public ChessController() { }
 
-    public void init(final int fieldCount, AnchorPane parent)
+    public void init(final int fieldCount, final AnchorPane parent)
     {
 	ROW_LENGTH = fieldCount;
-	
+
 	REBASE = fieldCount-1;
-	
-	MUTATION_SIZE = (int)Math.floor(new Double(POPULATION_SIZE)/2);
-	RECOMBINE_SIZE = (int)Math.ceil(new Double(POPULATION_SIZE)/2);
-	
+
+	MUTATION_SIZE = (int)Math.ceil(new Double(POPULATION_SIZE)/2);
+	RECOMBINE_SIZE = (int)Math.floor(new Double(POPULATION_SIZE)/2);
+
 	this.parent = parent;
-	
+
 	chessBoard = new ChessBoard(fieldCount);
 
 	chessBoard.resetBoardValue();
@@ -82,9 +85,10 @@ public class ChessController
 	    paneList.clear();
 	}
 
-	for (int i = 0; i < chessBoard.getChessFields().size(); i++)
+	final int chessboardSize =  chessBoard.getChessFields().size();
+	for (int i = 0; i < chessboardSize; i++)
 	{
-	    for ( int j = 0; j < chessBoard.getChessFields().size(); j++)
+	    for ( int j = 0; j < chessboardSize; j++)
 	    {
 		AnchorPane pane = new AnchorPane();
 
@@ -110,16 +114,16 @@ public class ChessController
 			pane.setStyle("-fx-background-color: black;");
 		    }
 		}
-		
+
 		pane.setPrefSize(35, 35);
 
 		chessGrid.add(pane, j, i);
 
 		paneList.add(pane); 
-		
+
 	    }
 	}
-//	parent.getChildren().add(chessGrid);
+	//	parent.getChildren().add(chessGrid);
     }
 
     private BigDecimal boardStatus()
@@ -151,7 +155,7 @@ public class ChessController
     public void startSolve()
     {
 	BigDecimal toReach = new BigDecimal(ROW_LENGTH);
-	
+
 	startTime = System.currentTimeMillis();
 
 	while(boardStatus().compareTo(toReach) != 0)
@@ -163,29 +167,29 @@ public class ChessController
 	    recombine();
 
 	    //reset boardValues
-//	    int c = 0;
+	    //	    int c = 0;
 	    for(ChessBoard board : completeResultPool)
 	    {
 		board.resetBoardValue();
-//		System.out.print((c<3?"m":"r") + board.getBoardValue() + "\t");
-//		c++;
+		//		System.out.print((c<3?"m":"r") + board.getBoardValue() + "\t");
+		//		c++;
 	    }
 	    for(ChessBoard board : resultPool)
 	    {
 		board.resetBoardValue();
-//		System.out.print(board.getBoardValue() + "\t");
+		//		System.out.print(board.getBoardValue() + "\t");
 	    }
 
 	    // select
 	    applySelection();
 
-//	    if(iterations%100 == 0)
-//	    {
-//		System.out.println(chessBoard.getBoardValue());
-//	    }
+	    //	    if(iterations%100 == 0)
+	    //	    {
+	    //		System.out.println(chessBoard.getBoardValue());
+	    //	    }
 
 	    iterations++;
-	    
+
 	    Platform.runLater(new Runnable() {
 
 		@Override
@@ -198,7 +202,7 @@ public class ChessController
 			drawQueens();
 		    }
 		}
-		
+
 	    });
 	}
 
@@ -206,7 +210,7 @@ public class ChessController
 	System.out.println("FINAL: " + boardStatus() + "\nIterations: " + iterations);
 	redrawBoard();
 	showPerfectResult();
-	
+
 	Platform.runLater(new Runnable() {
 
 	    @Override
@@ -216,69 +220,76 @@ public class ChessController
 		l.setStyle("-fx-text-fill:red;");
 		parent.getChildren().add(l);
 	    }
-	    
+
 	});
     }
 
     /**
      * Initial results based of first random ChessBoard<br>
-     * fills the resultPool list with 6 identical results
+     * fills the resultPool list with the specified number (POPULATION_SIZE)<br> of identical results
      */
     private void generateInitialResultSet()
     {
-	for(int i = 0; i < 6; i++)
+	for(int i = 0; i < POPULATION_SIZE; i++)
 	    resultPool.add(chessBoard.deepCopy());
     }
 
     /**
-     * Take 3 results from pool,<br>
+     * Take half(round up) of the results from the result pool,<br>
      * copy them<br>
      * and randomly mutate the queen positions 
      */
     private void mutate()
     {
-	int[] mutators = threeOutOfSix();
+	//int[] mutators = threeOutOfSix();
+
+	shuffleResultPool(resultPool);
 
 	if(!completeResultPool.isEmpty())
 	{
 	    completeResultPool.clear();
 	}
 
-	for(int i = 0; i < 3; i++)
+	for(int i = 0; i < MUTATION_SIZE; i++)
 	{
-	    completeResultPool.add(resultPool.get(mutators[i]).deepCopy());
+	    completeResultPool.add(resultPool.get(i).deepCopy());
 	    completeResultPool.get(i).mutateBoard();
 	}
     }
 
     /**
-     * generate 3 random result pairs<br>
+     * generate random result pairs<br>
      */
     private void recombine()
     {
-	int[][] parents = generateRandomPairs();
+	//int[][] parents = generateRandomPairs();
 
-	for(int i = 0; i < 3; i++)
+	int otherParent = POPULATION_SIZE -1;
+
+	for(int i = 0; i < RECOMBINE_SIZE; i++)
 	{
-	    completeResultPool.add(resultPool.get(parents[i][0]).generateChild(resultPool.get(parents[i][1])));
+	    completeResultPool.add(resultPool.get(i).generateChild(resultPool.get(otherParent--)));
 	}
     }
 
     /**
-     * generate 6 pairs out of resultPool and discard the worst<br>
-     * -> pool back to 6 results of average better quality
+     * generate pairs out of resultPool and discard the worst<br>
+     * -> pool back to initial results of average better quality
      */
     private void applySelection()
     {
 	// add resultPool to completeResultPool
 	completeResultPool.addAll(resultPool);
 
+	// random sort array
+	shuffleResultPool(completeResultPool);
+
 	// clear resultPool
 	resultPool.clear();
 
-	// 6x :
 	int x;
-	for(int i = 0; i < 6; i++)
+
+	for(int i = 0; i < POPULATION_SIZE; i++)
 	{
 	    // get random pair from completeResultPool
 	    ChessBoard a, b;
@@ -296,63 +307,88 @@ public class ChessController
 	    // add selected result to resultPool
 	    if(a.getBoardValue().compareTo(b.getBoardValue()) > 0)
 	    {
-		resultPool.add(a);
+		if(random.nextFloat() < ELEMINATION_PROPABILITY)
+		{
+		    resultPool.add(b);
+		}
+		else 
+		{
+		    resultPool.add(a);
+		}
+		
 	    }
 	    else
 	    {
 		resultPool.add(b);
 	    }
 	}
-	// after: resultPool.size == 6 completeResultPool.size == 0
+	// after: resultPool.size == POPULATION_SIZE completeResultPool.size == 0
     }
+
 
     /**
-     * Returns three unique random numbers between 0 and 5 (included)
-     * @return
-     */
-    private int[] threeOutOfSix()
-    {
-	int a = random.nextInt(6), b = random.nextInt(6), c = random.nextInt(6);
+     * Fischer-Yates Shuffle implementation for 
+     * ObservableList Arrays<br>
+     * sorts the resultPool randomly
+     */   
+    private void shuffleResultPool(final ObservableList<ChessBoard> pool) {
 
-	if(a!=b && a!=c && b!=c)
+	for( int i = pool.size() ; --i > 0; ) 
 	{
-	    return new int[] {a,b,c};
+	    int index = random.nextInt(i);
+	    ChessBoard tmp = pool.get(index);
+	    pool.set(index, pool.get(i));
+	    pool.set(i, tmp);
 	}
-	else
-	{
-	    threeOutOfSix();
-	}
-
-	return new int[] {0,1,2};
     }
 
-    /** 
-     * returns three pairs out of the 6 unmodified results
-     * @return 
-     */
-    private int[][] generateRandomPairs()
-    {
-	int[] lhs = threeOutOfSix();
-	int[] rhs = new int[] {-1,-1,-1};
+//    /**
+//     * Returns three unique random numbers between 0 and 5 (included)
+//     * @return
+//     */
+//    private int[] threeOutOfSix()
+//    {
+//	int a = random.nextInt(6), b = random.nextInt(6), c = random.nextInt(6);
+//
+//	if(a!=b && a!=c && b!=c)
+//	{
+//	    return new int[] {a,b,c};
+//	}
+//	else
+//	{
+//	    threeOutOfSix();
+//	}
+//
+//	return new int[] {0,1,2};
+//    }
 
-	for(int i = 0; i < 3; i++)
-	{
-	    int r = random.nextInt(6);
-
-	    for (int j = 0; j < 3; j++)
-	    {
-		if(lhs[j] == r || rhs[j] == r)
-		{
-		    i--;
-		    break;
-		} 
-		else if (j==2)
-		    rhs[i] = r;
-	    }
-	}
-
-	return new int[][] {{lhs[0],rhs[0]},{lhs[1],rhs[1]},{lhs[2],rhs[2]}};
-    }
+//    /** 
+//     * returns three pairs out of the 6 unmodified results
+//     * @return 
+//     */
+//    private int[][] generateRandomPairs()
+//    {
+//	int[] lhs = threeOutOfSix();
+//	int[] rhs = new int[] {-1,-1,-1};
+//
+//	for(int i = 0; i < 3; i++)
+//	{
+//	    int r = random.nextInt(6);
+//
+//	    for (int j = 0; j < 3; j++)
+//	    {
+//		if(lhs[j] == r || rhs[j] == r)
+//		{
+//		    i--;
+//		    break;
+//		} 
+//		else if (j==2)
+//		    rhs[i] = r;
+//	    }
+//	}
+//
+//	return new int[][] {{lhs[0],rhs[0]},{lhs[1],rhs[1]},{lhs[2],rhs[2]}};
+//    }
 
     private void showPerfectResult()
     {
@@ -373,7 +409,7 @@ public class ChessController
 	    System.out.println();
 	}
     }
-    
+
     private void drawQueens()
     {
 	for(int i = 0; i < ROW_LENGTH; i++)
@@ -398,22 +434,22 @@ public class ChessController
 		{
 		    if(j%2!=0)
 		    {
-			 chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: black;");
+			chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: black;");
 		    }
 		    else
 		    {
-			 chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: white;");
+			chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: white;");
 		    }
 		}
 		else
 		{
 		    if(j%2!=0)
 		    {
-			 chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: white;");
+			chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: white;");
 		    }
 		    else
 		    {
-			 chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: black;");
+			chessGrid.getChildren().get((i*ROW_LENGTH)+j).setStyle("-fx-background-color: black;");
 		    }
 		}
 	    }

@@ -14,12 +14,12 @@ import org.nic.genetics.dameproblem.controller.ChessController;
 public class MainApp extends Application {
 
     private static final String TITLE = "Queen Problem";
-    private static final int FIELDCOUNT = 16;
+    private static final int FIELDCOUNT = 8;
 
     private ChessController cc;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(final Stage primaryStage) throws Exception {
 
 	FXMLLoader loader = new FXMLLoader(getClass().getResource("view/ChessView.fxml"));
 

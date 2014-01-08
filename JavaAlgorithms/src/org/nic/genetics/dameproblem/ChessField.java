@@ -91,7 +91,6 @@ public class ChessField
     public ChessField deepCopy()
     {
 	ChessField newField = new ChessField();
-
 	newField.freeStatus.set(this.freeStatus.get());
 	newField.queen.set(this.queen.get());
 	newField.queenValue = new BigDecimal(this.getQueenValue().toString());

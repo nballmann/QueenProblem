@@ -78,7 +78,7 @@ public class EveryChessControllerShould
 	    e.printStackTrace();
 	}
 
-	assertEquals(6, size);
+	assertEquals(ChessController.POPULATION_SIZE, size);
     }
 
     @SuppressWarnings("unchecked")
@@ -127,7 +127,7 @@ public class EveryChessControllerShould
 	    e.printStackTrace();
 	}
 
-	assertEquals(3, size);
+	assertEquals(ChessController.MUTATION_SIZE, size);
     }
 
     @SuppressWarnings("unchecked")
@@ -176,7 +176,7 @@ public class EveryChessControllerShould
 	    e.printStackTrace();
 	}
 
-	assertEquals(3, size);
+	assertEquals(ChessController.RECOMBINE_SIZE, size);
     }
 
     @Test

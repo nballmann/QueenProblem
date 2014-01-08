@@ -26,7 +26,7 @@ public class ChessBoard
     public ChessBoard(final int fieldCount)
     {
 	this.fieldCount = (int) Math.pow(fieldCount, 2);
-	length = fieldCount-1;
+	length = fieldCount;
 
 	for(int i = 0; i < fieldCount; i++)
 	{
@@ -57,22 +57,22 @@ public class ChessBoard
 	resetBoardValue();
     }
 
-    public int getFieldCount()
+    public final int getFieldCount()
     {
 	return fieldCount;
     }
 
-    public void setFieldCount(final int newFieldCount)
+    public final void setFieldCount(final int newFieldCount)
     {
 	this.fieldCount = newFieldCount;
     }
 
-    public ObservableList<ObservableList<ChessField>> getChessFields()
+    public final ObservableList<ObservableList<ChessField>> getChessFields()
     {
 	return chessFields;
     }
 
-    public void setQueen(final int row, final int column, final boolean queenStatus)
+    public final void setQueen(final int row, final int column, final boolean queenStatus)
     {
 	chessFields.get(row).get(column).setQueen(queenStatus);
     }
@@ -81,9 +81,9 @@ public class ChessBoard
     {
 	field.setQueen(queenStatus);
 
-	for(int i = 0; i < chessFields.size(); i++)
+	for(int i = 0; i < fieldCount; i++) //chessFields.size()
 	{
-	    for (int j = 0; j < chessFields.size(); j++)
+	    for (int j = 0; j < fieldCount; j++) //chessFields.size()
 	    {
 		if(chessFields.get(i).get(j) == field)
 		{
@@ -100,7 +100,7 @@ public class ChessBoard
 
     public BigDecimal getBoardValue()
     {
-	BigDecimal value = new BigDecimal(length+1);
+	BigDecimal value = new BigDecimal(length);
 
 	for(ObservableList<ChessField> rows : chessFields)
 	{
@@ -135,24 +135,19 @@ public class ChessBoard
 
 	for(int i = row + 1; i < ChessController.ROW_LENGTH; i++)
 	{
-//	    if(i < 6)
-//	    {
-		if(++rowPlus < ChessController.ROW_LENGTH)
-		{
-		    chessFields.get(i).get(rowPlus).changeFreeStatus(false);
-		    changeQueenValue(chessFields.get(i).get(rowPlus));
-		}
 
-		if(--rowMinus >= 0)
-		{
-		    chessFields.get(i).get(rowMinus).changeFreeStatus(false);
-		    changeQueenValue(chessFields.get(i).get(rowMinus));
-		}
-//	    }
-//	    else
-//	    {
-//		break;
-//	    }
+	    if(++rowPlus < ChessController.ROW_LENGTH)
+	    {
+		chessFields.get(i).get(rowPlus).changeFreeStatus(false);
+		changeQueenValue(chessFields.get(i).get(rowPlus));
+	    }
+
+	    if(--rowMinus >= 0)
+	    {
+		chessFields.get(i).get(rowMinus).changeFreeStatus(false);
+		changeQueenValue(chessFields.get(i).get(rowMinus));
+	    }
+
 	}
 
 	rowPlus = column;
@@ -160,24 +155,19 @@ public class ChessBoard
 
 	for(int j = row - 1; j >= 0;j--)
 	{
-//	    if(j >= 0)
-//	    {
-		if(++rowPlus < ChessController.ROW_LENGTH)
-		{
-		    chessFields.get(j).get(rowPlus).changeFreeStatus(false);
-		    changeQueenValue(chessFields.get(j).get(rowPlus));
-		}
 
-		if(--rowMinus >= 0)
-		{
-		    chessFields.get(j).get(rowMinus).changeFreeStatus(false);
-		    changeQueenValue(chessFields.get(j).get(rowMinus));
-		}
-//	    }
-//	    else
-//	    {
-//		break;
-//	    }
+	    if(++rowPlus < ChessController.ROW_LENGTH)
+	    {
+		chessFields.get(j).get(rowPlus).changeFreeStatus(false);
+		changeQueenValue(chessFields.get(j).get(rowPlus));
+	    }
+
+	    if(--rowMinus >= 0)
+	    {
+		chessFields.get(j).get(rowMinus).changeFreeStatus(false);
+		changeQueenValue(chessFields.get(j).get(rowMinus));
+	    }
+
 
 	    //		System.out.println("column: " + j + "rows: " + rowPlus + ":" + rowMinus);
 	}
@@ -210,17 +200,17 @@ public class ChessBoard
      */
     public ChessBoard deepCopy()
     {
-	ChessBoard newBoard = new ChessBoard(chessFields.size());
+	ChessBoard newBoard = new ChessBoard(length);
 
 	newBoard.chessFields = FXCollections.observableArrayList();
 
-	for (int i = 0; i < this.chessFields.size(); i++)
+	for (int i = 0; i < length; i++)
 	{
 	    ObservableList<ChessField> newList = FXCollections.observableArrayList();
 
 	    newBoard.chessFields.add(newList);
 
-	    for (int j = 0; j < this.chessFields.get(0).size(); j++)
+	    for (int j = length; j-- > 0; )
 	    {
 		newBoard.chessFields.get(i).add(this.chessFields.get(i).get(j).deepCopy());
 	    }
@@ -235,11 +225,11 @@ public class ChessBoard
      */
     public void mutateBoard()
     {
-	for (int i = 0; i < chessFields.size(); i++)
+	for (int i = length; i-- > 0; )
 	{
 	    int trySet = 0;
 
-	    for (int j = 0; j < chessFields.get(0).size(); j++)
+	    for (int j = length; j-- > 0; )
 	    {
 		if (chessFields.get(j).get(i).isQueen())
 		{
@@ -288,13 +278,13 @@ public class ChessBoard
     {
 	ArrayList<ChessField> fields = new ArrayList<>();
 
-	for( int i = 0; i < chessFields.size(); i++)
+	for( int i = length; i-- > 0; )
 	{
-	    for( int j = 0; j < chessFields.get(0).size(); j++)
+	    for( int j = length; j-- > 0; )
 	    {
 		if(chessFields.get(i).get(j).isQueen())
 		{
-		    fields.add(chessFields.get(i).get(length-j));
+		    fields.add(chessFields.get(i).get(length-1-j));
 
 		    chessFields.get(i).get(j).setQueen(false);
 		}
@@ -317,7 +307,7 @@ public class ChessBoard
 	ChessBoard child = this.deepCopy();
 	child.recombineBoard();
 
-	int range = random.nextInt(length+1);
+	int range = random.nextInt(length);
 	int counter = 0;
 	int validator = 0;
 
@@ -329,9 +319,9 @@ public class ChessBoard
 		{
 		    boolean lastSet = false;
 
-		    for(int i = 0; i < otherParent.getChessFields().size(); i++)
+		    for(int i = length; --i > 0; ) //otherParent.getChessFields().size()
 		    {
-			for(int j = 0; j < otherParent.getChessFields().size(); j++)
+			for(int j = length; --j > 0; )
 			{
 			    if(otherParent.getChessFields().get(i).get(j).isQueen()) // for each queen of the other parent
 			    {
@@ -377,9 +367,9 @@ public class ChessBoard
 	    }
 	}
 
-	for( int i = 0; i < chessFields.size(); i++)
+	for( int i = length; i-- > 0; )
 	{
-	    for( int j = 0; j < chessFields.get(0).size(); j++)
+	    for( int j = length; j-- > 0; )
 	    {
 		if(chessFields.get(i).get(j).isQueen())
 		{
